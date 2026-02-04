@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe6eb; /* Soft Pink Theme */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Prevents scrollbars */
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 50px 70px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.2);
+            text-align: center;
+            z-index: 10;
+            max-width: 90%;
+        }
+
+        h1 {
+            color: #ff3366;
+            font-size: 3rem;
+            margin: 0 0 10px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        p {
+            color: #888;
+            font-size: 1.5rem;
+            margin: 0 0 40px 0;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            height: 80px; 
+            width: 100%;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        #yesBtn {
+            background: #ff3366;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4);
+            z-index: 5;
+            transition: transform 0.3s ease; /* Smooth size increase */
+        }
+
+        #noBtn {
+            background: #fff;
+            color: #ff3366;
+            border: 2px solid #ddd;
+            z-index: 100;
+            /* Important: Transition for smooth gliding */
+            transition: left 0.4s ease, top 0.4s ease; 
+        }
+
+        /* Highlight style */
+        #noBtn.active {
+            border-color: #ff3366;
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+        }
+
+        .success-message {
+            display: none;
+            font-size: 1.5rem;
+            color: #d63384;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 51, 102, 0.6);
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <h1>I Love You</h1>
+        <p>Will you be my Valentine?</p>
+        
+        <div class="btn-container">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+
+        <div id="successMsg" class="success-message">
+            Yay! I knew you would say yes! ❤️
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const successMsg = document.getElementById('successMsg');
+        
+        let yesScale = 1;
+
+        function moveBtn() {
+            // 1. Highlight the border
+            noBtn.classList.add('active');
+
+            // 2. Make Yes button bigger smoothly
+            yesScale += 0.2;
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // 3. Switch to Fixed Positioning 
+            // This is the key fix: It takes the button out of the card layout
+            // and places it relative to the entire window.
+            noBtn.style.position = "fixed";
+
+            // 4. Calculate Safe Boundaries
+            // We subtract the button size to ensure it never crosses the edge
+            const w = window.innerWidth - noBtn.offsetWidth - 20; // -20 for safety padding
+            const h = window.innerHeight - noBtn.offsetHeight - 20;
+
+            // Generate Random Coordinates
+            const randomX = Math.random() * w;
+            const randomY = Math.random() * h;
+
+            // Apply new coordinates (ensure they are positive)
+            noBtn.style.left = Math.max(10, randomX) + "px";
+            noBtn.style.top = Math.max(10, randomY) + "px";
+        }
+
+        // Trigger on Mouseover (Desktop)
+        noBtn.addEventListener('mouseover', moveBtn);
+        
+        // Trigger on Click (Mobile)
+        noBtn.addEventListener('click', moveBtn);
+
+        // Success Action
+        yesBtn.addEventListener('click', () => {
+            document.body.style.backgroundColor = "#ffccd5";
+            noBtn.style.display = 'none';
+            successMsg.style.display = 'block';
+            
+            yesBtn.innerText = "FOREVER ❤️";
+            yesBtn.style.transform = 'scale(1.5)';
+            
+            createHeartRain();
+        });
+
+        function createHeartRain() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '-10vh';
+                heart.style.fontSize = Math.random() * 30 + 10 + 'px';
+                heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+                document.body.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 5000);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
